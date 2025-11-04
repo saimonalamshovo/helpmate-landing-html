@@ -1,73 +1,1697 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Helpmate - The AI That Runs Your Store While You Sleep</title>
-<!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<!-- Font Awesome for Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>/* CSS omitted for brevity */</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helpmate - The AI That Runs Your Store While You Sleep</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --deep-blue: #0D1B2A;
+            --teal: #00BFA6;
+            --white: #FFFFFF;
+            --light-teal: rgba(0, 191, 166, 0.2);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background: linear-gradient(135deg, #0D1B2A 0%, #1a2a3a 100%);
+            color: var(--white);
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(circle, var(--teal) 0%, transparent 70%);
+            opacity: 0.05;
+            animation: rotate 30s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--teal), transparent);
+            opacity: 0.1;
+            animation: float 20s infinite ease-in-out;
+        }
+        
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+        
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 30%;
+            animation-delay: 4s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        nav.scrolled {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 15px 50px;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo i {
+            color: var(--teal);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--teal);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Glass Card */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 191, 166, 0.2);
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--teal), #00a890);
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(0, 191, 166, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 191, 166, 0.4);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--teal);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--teal);
+            transform: translateY(-2px);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 0 80px;
+            position: relative;
+        }
+        
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        
+        .hero-text h1 {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--white), var(--teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .hero-text p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+        
+        .trust-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+        
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+        }
+        
+        .trust-item i {
+            color: var(--teal);
+        }
+        
+        .hero-visual {
+            position: relative;
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+        
+        .chat-mockup {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--teal), #00a890);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+        }
+        
+        .chat-info h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .chat-info p {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 15px;
+            border-radius: 15px;
+            animation: slideIn 0.5s ease;
+        }
+        
+        .message.user {
+            background: var(--glass-bg);
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .message.bot {
+            background: linear-gradient(135deg, var(--teal), #00a890);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Problem Section */
+        .problem {
+            padding: 100px 0;
+            position: relative;
+        }
+        
+        .section-title {
+            font-size: 42px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 50px;
+            background: linear-gradient(135deg, var(--white), var(--teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .problem-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+        
+        .problem-text {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        
+        .problem-text p {
+            margin-bottom: 20px;
+        }
+        
+        .problem-quotes {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 30px;
+        }
+        
+        .quote {
+            font-style: italic;
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--teal);
+        }
+        
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .comparison-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .comparison-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .comparison-card h3 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: var(--teal);
+        }
+        
+        .comparison-card i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.7;
+        }
+        
+        /* Solution Section */
+        .solution {
+            padding: 100px 0;
+        }
+        
+        .solution-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .solution-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .solution-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--teal), #00a890);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .solution-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .solution-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 191, 166, 0.2);
+        }
+        
+        .solution-card i {
+            font-size: 48px;
+            color: var(--teal);
+            margin-bottom: 20px;
+        }
+        
+        .solution-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        .solution-card p {
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .feature-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 30px;
+            display: flex;
+            gap: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 10px 25px rgba(0, 191, 166, 0.15);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--teal), #00a890);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .feature-content h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .feature-content p {
+            font-size: 16px;
+            line-height: 1.5;
+            opacity: 0.9;
+        }
+        
+        .feature-content .highlight {
+            color: var(--teal);
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        /* Comparison Table */
+        .comparison-table {
+            padding: 100px 0;
+        }
+        
+        .table-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            margin-top: 50px;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        th {
+            font-weight: 600;
+            font-size: 18px;
+            color: var(--teal);
+        }
+        
+        td {
+            font-size: 16px;
+        }
+        
+        .check {
+            color: var(--teal);
+            font-size: 20px;
+        }
+        
+        .cross {
+            color: #ff4757;
+            font-size: 20px;
+        }
+        
+        /* Demo Section */
+        .demo {
+            padding: 100px 0;
+        }
+        
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            margin-top: 50px;
+        }
+        
+        .demo-visual {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 30px;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .demo-visual::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--teal), transparent);
+            opacity: 0.1;
+            animation: pulse 3s ease infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.1; }
+            50% { opacity: 0.2; }
+        }
+        
+        .demo-content h3 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar {
+            background: var(--glass-bg);
+            border-radius: 50px;
+            height: 30px;
+            margin: 30px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            width: 40%;
+            background: linear-gradient(90deg, var(--teal), #00a890);
+            border-radius: 50px;
+            position: relative;
+            animation: progressAnimation 2s ease;
+        }
+        
+        @keyframes progressAnimation {
+            from { width: 0; }
+            to { width: 40%; }
+        }
+        
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: 600;
+        }
+        
+        /* Social Proof */
+        .social-proof {
+            padding: 100px 0;
+        }
+        
+        .testimonial {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            margin-top: 50px;
+            position: relative;
+        }
+        
+        .testimonial::before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            font-size: 80px;
+            color: var(--teal);
+            opacity: 0.2;
+        }
+        
+        .testimonial-content {
+            font-size: 20px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .author-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--teal), #00a890);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 24px;
+        }
+        
+        .author-info h4 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .author-info p {
+            opacity: 0.7;
+        }
+        
+        .fomo-text {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 18px;
+            color: var(--teal);
+            font-weight: 600;
+        }
+        
+        /* Pricing */
+        .pricing {
+            padding: 100px 0;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .pricing-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .pricing-card.featured {
+            border-color: var(--teal);
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 191, 166, 0.2);
+        }
+        
+        .pricing-card.featured::before {
+            content: 'Best Choice';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--teal), #00a890);
+            color: var(--white);
+            padding: 5px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 191, 166, 0.2);
+        }
+        
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-10px);
+        }
+        
+        .plan-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .plan-price {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--teal);
+            margin-bottom: 10px;
+        }
+        
+        .plan-price span {
+            font-size: 16px;
+            opacity: 0.7;
+        }
+        
+        .plan-description {
+            font-size: 16px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .plan-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        
+        .plan-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 16px;
+        }
+        
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+        
+        .plan-features li i {
+            color: var(--teal);
+            margin-right: 10px;
+        }
+        
+        /* Urgency */
+        .urgency {
+            padding: 100px 0;
+        }
+        
+        .urgency-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 50px;
+            text-align: center;
+            margin-top: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .urgency-content::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--teal) 0%, transparent 70%);
+            opacity: 0.05;
+            animation: rotate 20s linear infinite;
+        }
+        
+        .urgency-points {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .urgency-point {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .urgency-point i {
+            font-size: 36px;
+            color: var(--teal);
+        }
+        
+        .urgency-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--teal), #00a890);
+            color: var(--white);
+            padding: 10px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            margin: 20px 0;
+            animation: pulse 2s ease infinite;
+        }
+        
+        /* FAQ */
+        .faq {
+            padding: 100px 0;
+        }
+        
+        .faq-container {
+            max-width: 800px;
+            margin: 50px auto 0;
+        }
+        
+        .faq-item {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .faq-question {
+            padding: 25px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-question:hover {
+            background: rgba(0, 191, 166, 0.1);
+        }
+        
+        .faq-question i {
+            transition: transform 0.3s ease;
+        }
+        
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+        
+        .faq-answer {
+            padding: 0 25px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-item.active .faq-answer {
+            padding: 0 25px 25px;
+            max-height: 500px;
+        }
+        
+        .faq-answer p {
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        
+        /* Final CTA */
+        .final-cta {
+            padding: 100px 0;
+            text-align: center;
+        }
+        
+        .final-cta-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 60px 40px;
+            margin-top: 50px;
+        }
+        
+        .final-cta-content h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--white), var(--teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .final-cta-content p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--glass-border);
+            padding: 40px 0;
+            text-align: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--teal);
+            opacity: 1;
+        }
+        
+        .copyright {
+            opacity: 0.5;
+            font-size: 14px;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-text h1 {
+                font-size: 36px;
+            }
+            
+            .problem-content,
+            .comparison,
+            .demo-container,
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .solution-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .urgency-points {
+                grid-template-columns: 1fr;
+            }
+            
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+        }
+    </style>
 </head>
 <body>
-<!-- Animated Background -->
-<div class="bg-animation">
-  <div class="floating-shapes">
-    <div class="shape"></div>
-    <div class="shape"></div>
-    <div class="shape"></div>
-  </div>
-</div>
-<!-- Navigation -->
-<nav id="navbar">
-  <div class="nav-container">
-    <a href="#" class="logo"><i class="fas fa-robot"></i> Helpmate</a>
-    <ul class="nav-links">
-      <li><a href="#features">Features</a></li>
-      <li><a href="#pricing">Pricing</a></li>
-      <li><a href="#demo">Demo</a></li>
-      <li><a href="#faq">FAQ</a></li>
-    </ul>
-  </div>
-</nav>
-<!-- Hero Section -->
-<section class="hero">
-  <div class="container">
-    <div class="hero-content">
-      <div class="hero-text">
-        <h1>Your business stays active 24/7 - even when you don’t.</h1>
-        <p>1 tool. 12 automations. Infinite sales. Helpmate automates customer support, sales, refunds, and follow-ups - all powered by one smart AI.</p>
-        <div class="btn-group">
-          <a href="#pricing" class="btn btn-primary">Start Free Trial</a>
-          <a href="#demo" class="btn btn-secondary">See Live Demo</a>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
         </div>
-        <div class="trust-row">
-          <div class="trust-item"><i class="fas fa-check-circle"></i> <span>Saves 720 hours/month in support time</span></div>
-          <div class="trust-item"><i class="fas fa-check-circle"></i> <span>30-day money-back guarantee</span></div>
-          <div class="trust-item"><i class="fas fa-check-circle"></i> <span>No coding required</span></div>
-        </div>
-      </div>
-      <div class="hero-visual">
-        <div class="chat-mockup">
-          <div class="chat-header">
-            <div class="chat-avatar">H</div>
-            <div class="chat-info">
-              <h3>Helpmate AI</h3>
-              <p>Always online</p>
-            </div>
-          </div>
-          <div class="chat-messages">
-            <div class="message user">Where’s my order?</div>
-            <div class="message bot">Your order #12345 is on its way! Track it <a href="#">here</a>.</div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
-</section>
-<!-- More sections (Problem, Solution, Features, etc.) omitted for brevity -->
+    
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <i class="fas fa-robot"></i>
+                Helpmate
+            </a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#demo">Demo</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Your business stays active 24/7 - even when you don't.</h1>
+                    <p>1 tool. 12 automations. Infinite sales. Helpmate automates customer support, sales, refunds, and follow-ups - all powered by one smart AI.</p>
+                    <div class="btn-group">
+                        <a href="#pricing" class="btn btn-primary">Start Free Trial</a>
+                        <a href="#demo" class="btn btn-secondary">See Live Demo</a>
+                    </div>
+                    <div class="trust-row">
+                        <div class="trust-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Saves 720+ hours/month in support time</span>
+                        </div>
+                        <div class="trust-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>30-day money-back guarantee</span>
+                        </div>
+                        <div class="trust-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>No coding required</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="chat-mockup">
+                        <div class="chat-header">
+                            <div class="chat-avatar">H</div>
+                            <div class="chat-info">
+                                <h3>Helpmate AI</h3>
+                                <p>Always online</p>
+                            </div>
+                        </div>
+                        <div class="chat-messages">
+                            <div class="message user">Where's my order?</div>
+                            <div class="message bot">Your order #12345 is on its way! Track it here: [tracking link]</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Problem Section -->
+    <section class="problem">
+        <div class="container">
+            <h2 class="section-title fade-in">Tired of replying to the same messages every single day?</h2>
+            <div class="problem-content">
+                <div class="problem-text fade-in">
+                    <p>"Can I get a refund?"</p>
+                    <p>"Any discount?"</p>
+                    <p>"When will my order arrive?"</p>
+                    <p>Hundreds of these repeat messages - every. single. day.</p>
+                    <p>Meanwhile, customers add products to cart and disappear. They won't come back on their own.</p>
+                    <p><strong>Result:</strong> You're losing sales, customers, and hours of your life - all at once.</p>
+                </div>
+                <div class="problem-quotes fade-in">
+                    <div class="quote">"Before Helpmate: Late-night unanswered inboxes"</div>
+                    <div class="quote">"Before Helpmate: Abandoned carts left forever"</div>
+                    <div class="quote">"Before Helpmate: Angry posts about refund delays"</div>
+                </div>
+            </div>
+            <div class="comparison">
+                <div class="comparison-card fade-in">
+                    <i class="fas fa-moon"></i>
+                    <h3>Before Helpmate</h3>
+                    <p>Late-night unanswered inboxes</p>
+                    <p>Abandoned carts left forever</p>
+                    <p>Angry posts about refund delays</p>
+                </div>
+                <div class="comparison-card fade-in">
+                    <i class="fas fa-sun"></i>
+                    <h3>After Helpmate</h3>
+                    <p>24/7 instant replies</p>
+                    <p>Auto cart recovery via email or DM</p>
+                    <p>Refunds and returns handled directly in chat</p>
+                </div>
+            </div>
+            <div class="text-center" style="margin-top: 40px;">
+                <a href="#pricing" class="btn btn-primary fade-in">Automate Now</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Solution Section -->
+    <section class="solution">
+        <div class="container">
+            <h2 class="section-title fade-in">Helpmate = Your support agent + salesperson + CRM in one.</h2>
+            <div class="solution-cards">
+                <div class="solution-card fade-in">
+                    <i class="fas fa-headset"></i>
+                    <h3>24/7 Customer Support</h3>
+                    <p>AI chatbot pulls from your knowledge base to answer questions, track orders, and handle returns - without anyone staying up late.</p>
+                </div>
+                <div class="solution-card fade-in">
+                    <i class="fas fa-tag"></i>
+                    <h3>Instant Sales Push</h3>
+                    <p>When a customer asks "Any discount?", Helpmate automatically drops a limited-time coupon - closing the sale on the spot.</p>
+                </div>
+                <div class="solution-card fade-in">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h3>Recover Lost Carts</h3>
+                    <p>Shoppers who leave mid-checkout get a soft reminder like, "Hey, you forgot this ✦ Want 10% off?" Smart. Gentle. Profitable.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title fade-in">Feature Deep Dive - Proof it really works</h2>
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>AI Chatbot with Knowledgebase</h3>
+                        <p>No more repeating answers. Customers ask, they get human-style replies instantly.</p>
+                        <p class="highlight">→ Instant response = faster purchase decisions.</p>
+                    </div>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Search Product by Image</h3>
+                        <p>Upload a photo, find a match.</p>
+                        <p class="highlight">→ Shoppers stop scrolling and start buying.</p>
+                    </div>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-undo"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Abandoned Cart Follow-Up</h3>
+                        <p>Auto emails or DMs bring back customers who almost bought.</p>
+                        <p class="highlight">→ You convert lost traffic for free.</p>
+                    </div>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Order Tracking by ID / Email / Phone</h3>
+                        <p>No more "Where's my order?" spam.</p>
+                        <p class="highlight">→ Customers track it right inside chat and stay happy.</p>
+                    </div>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Ticketing System Integration</h3>
+                        <p>All after-hours chats automatically log as tickets.</p>
+                        <p class="highlight">→ No message ever slips through.</p>
+                    </div>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Smart Coupon Delivery</h3>
+                        <p>Helpmate sends offers exactly when customers are ready to buy.</p>
+                        <p class="highlight">→ Perfect timing = instant sales.</p>
+                    </div>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Product Suggestions in Chat</h3>
+                        <p>A shopper says, "Need something for oily skin." Helpmate shows bestsellers with discounts.</p>
+                        <p class="highlight">→ Upsell, cross-sell, smart-sell.</p>
+                    </div>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Proactive Sales</h3>
+                        <p>The bot doesn't just answer - it sells: "Buy today, get free shipping."</p>
+                        <p class="highlight">→ You relax, it closes.</p>
+                    </div>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Sales Notifications</h3>
+                        <p>Live pop-ups like "Someone from Dhaka just bought this."</p>
+                        <p class="highlight">→ Builds trust and urgency.</p>
+                    </div>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Refund & Return in Chat</h3>
+                        <p>Customers can request returns right in the conversation.</p>
+                        <p class="highlight">→ No angry posts. No drama.</p>
+                    </div>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-ad"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Promo Bar</h3>
+                        <p>Auto banners for flash deals, free shipping, or festive offers.</p>
+                        <p class="highlight">→ Every visitor sees the same promo - no manual work.</p>
+                    </div>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Lead Capture</h3>
+                        <p>Helpmate collects name, email, and phone directly from chats.</p>
+                        <p class="highlight">→ No extra lead tools. No extra cost.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Comparison Table -->
+    <section class="comparison-table">
+        <div class="container">
+            <h2 class="section-title fade-in">Why Helpmate Beats Hiring a Support Agent</h2>
+            <p class="text-center fade-in" style="font-size: 20px; margin-bottom: 30px;">A full-time support agent costs $400+/month. Helpmate starts at $199/year.</p>
+            <div class="table-container fade-in">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Function</th>
+                            <th>Human Agent</th>
+                            <th>Helpmate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Works 24/7</td>
+                            <td><i class="fas fa-times cross"></i> No</td>
+                            <td><i class="fas fa-check check"></i> Yes</td>
+                        </tr>
+                        <tr>
+                            <td>Handles 50+ customers at once</td>
+                            <td><i class="fas fa-times cross"></i> No</td>
+                            <td><i class="fas fa-check check"></i> Yes</td>
+                        </tr>
+                        <tr>
+                            <td>Closes sales with coupons</td>
+                            <td><i class="fas fa-exclamation-triangle" style="color: #ffa502;"></i> Depends on mood</td>
+                            <td><i class="fas fa-check check"></i> Always</td>
+                        </tr>
+                        <tr>
+                            <td>Monthly cost</td>
+                            <td>$400+</td>
+                            <td>~$19/mo (billed yearly)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center" style="margin-top: 40px;">
+                <a href="#pricing" class="btn btn-primary fade-in">Yes, I'm done replying manually</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Demo Section -->
+    <section class="demo" id="demo">
+        <div class="container">
+            <h2 class="section-title fade-in">See Helpmate in action - real chat, real conversions.</h2>
+            <div class="demo-container">
+                <div class="demo-visual fade-in">
+                    <i class="fas fa-play-circle" style="font-size: 80px; color: var(--teal);"></i>
+                </div>
+                <div class="demo-content fade-in">
+                    <h3>You're just 1 step away from 24/7 automation.</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                        <div class="progress-text">■■■■□□□□□□</div>
+                    </div>
+                    <a href="#pricing" class="btn btn-primary">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Social Proof -->
+    <section class="social-proof">
+        <div class="container">
+            <h2 class="section-title fade-in">Hear it from WooCommerce store owners who already switched.</h2>
+            <div class="testimonial fade-in">
+                <p class="testimonial-content">"Used to reply to 20+ inbox messages every night. Now Helpmate handles everything - I just check the sales dashboard."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">F</div>
+                    <div class="author-info">
+                        <h4>Farhan</h4>
+                        <p>SkinCareBD</p>
+                    </div>
+                </div>
+            </div>
+            <p class="fomo-text fade-in">The Lifetime Deal is still live - for now.</p>
+        </div>
+    </section>
+    
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <h2 class="section-title fade-in">Get a full AI support team for less than one staff's salary.</h2>
+            <p class="text-center fade-in" style="font-size: 18px; margin-bottom: 30px;">Every plan includes a 30-day money-back guarantee. No risk. All automation.</p>
+            <div class="pricing-grid">
+                <div class="pricing-card fade-in">
+                    <h3 class="plan-name">Starter</h3>
+                    <div class="plan-price">$199<span>/yr</span></div>
+                    <p class="plan-description">"Support that works while you rest."</p>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> 1 Website</li>
+                        <li><i class="fas fa-check"></i> 5K Chat Credits</li>
+                        <li><i class="fas fa-check"></i> 100 Knowledge Base</li>
+                        <li><i class="fas fa-check"></i> 1K Products</li>
+                        <li><i class="fas fa-check"></i> All major features</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary" style="width: 100%;">Get Starter</a>
+                </div>
+                <div class="pricing-card fade-in">
+                    <h3 class="plan-name">Growth</h3>
+                    <div class="plan-price">$399<span>/yr</span></div>
+                    <p class="plan-description">"Let conversations drive conversions."</p>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> 4 Websites</li>
+                        <li><i class="fas fa-check"></i> 20K Chat Credits</li>
+                        <li><i class="fas fa-check"></i> 8K Products</li>
+                        <li><i class="fas fa-check"></i> Fully unlocked features</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary" style="width: 100%;">Get Growth</a>
+                </div>
+                <div class="pricing-card featured fade-in">
+                    <h3 class="plan-name">Scale</h3>
+                    <div class="plan-price">$799<span>/yr</span></div>
+                    <p class="plan-description">"Support. Sell. Scale without limits."</p>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> 10 Websites</li>
+                        <li><i class="fas fa-check"></i> 60K Chat Credits</li>
+                        <li><i class="fas fa-check"></i> 30K Products</li>
+                        <li><i class="fas fa-check"></i> 300 KB entries/site</li>
+                        <li><i class="fas fa-check"></i> Full stack features</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary" style="width: 100%;">Get Scale</a>
+                </div>
+                <div class="pricing-card fade-in">
+                    <h3 class="plan-name">Lifetime</h3>
+                    <div class="plan-price">$999<span>/one-time</span></div>
+                    <p class="plan-description">"One payment. Ongoing support."</p>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> 1 Website</li>
+                        <li><i class="fas fa-check"></i> 200K Chat Credits</li>
+                        <li><i class="fas fa-check"></i> Top-up later as needed</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary" style="width: 100%;">Secure Lifetime Deal</a>
+                </div>
+                <div class="pricing-card fade-in">
+                    <h3 class="plan-name">Business</h3>
+                    <div class="plan-price">Custom</div>
+                    <p class="plan-description">"For serious volume & SLA needs."</p>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> Custom solutions</li>
+                        <li><i class="fas fa-check"></i> Priority support</li>
+                        <li><i class="fas fa-check"></i> SLA guarantee</li>
+                    </ul>
+                    <a href="#" class="btn btn-secondary" style="width: 100%;">Talk to Sales</a>
+                </div>
+            </div>
+            <p class="text-center fade-in" style="margin-top: 30px; font-style: italic; opacity: 0.8;">Note: Lifetime deals are limited. Once they're gone, they're gone.</p>
+        </div>
+    </section>
+    
+    <!-- Urgency Section -->
+    <section class="urgency">
+        <div class="container">
+            <h2 class="section-title fade-in">What you lose if you don't start today</h2>
+            <div class="urgency-content fade-in">
+                <div class="urgency-points">
+                    <div class="urgency-point">
+                        <i class="fas fa-shopping-cart"></i>
+                        <p>Every hour, abandoned carts mean lost revenue.</p>
+                    </div>
+                    <div class="urgency-point">
+                        <i class="fas fa-comment-slash"></i>
+                        <p>Slow replies lead to bad reviews.</p>
+                    </div>
+                    <div class="urgency-point">
+                        <i class="fas fa-chart-line"></i>
+                        <p>Manual systems can't scale your sales.</p>
+                    </div>
+                </div>
+                <div class="urgency-badge">Lifetime Deal - Once it's gone, it's gone.</div>
+                <a href="#pricing" class="btn btn-primary">Secure My Deal Now</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- FAQ Section -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <h2 class="section-title fade-in">Frequently Asked Questions</h2>
+            <div class="faq-container">
+                <div class="faq-item fade-in">
+                    <div class="faq-question">
+                        Does it work outside WooCommerce?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes. It's optimized for WooCommerce but supports Shopify and custom stores (with some limitations).</p>
+                    </div>
+                </div>
+                <div class="faq-item fade-in">
+                    <div class="faq-question">
+                        Already have a team - still need it?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Helpmate doesn't replace your team; it frees them up. Your people focus on sales, not small talk.</p>
+                    </div>
+                </div>
+                <div class="faq-item fade-in">
+                    <div class="faq-question">
+                        What if my chat credits run out?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Just buy fixed credits. No recurring trap.</p>
+                    </div>
+                </div>
+                <div class="faq-item fade-in">
+                    <div class="faq-question">
+                        Do you really offer refunds?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely. If it's not for you within 30 days, get a full refund - no questions asked.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Final CTA -->
+    <section class="final-cta">
+        <div class="container">
+            <div class="final-cta-content fade-in">
+                <h2>Are you running your store - or is it running you?</h2>
+                <p>Helpmate automates your store's support, sales, and recovery - so you can focus on growth, not inboxes.</p>
+                <div class="btn-group" style="justify-content: center;">
+                    <a href="#pricing" class="btn btn-primary">Get Helpmate Now</a>
+                    <a href="#demo" class="btn btn-secondary">Watch Live Demo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="#">Docs</a>
+                <a href="#">Privacy</a>
+                <a href="#">Support</a>
+            </div>
+            <p class="copyright">© 2023 Helpmate. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Fade in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // FAQ accordion
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const faqItem = question.parentElement;
+                const isActive = faqItem.classList.contains('active');
+                
+                // Close all FAQ items
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Open clicked item if it wasn't active
+                if (!isActive) {
+                    faqItem.classList.add('active');
+                }
+            });
+        });
+        
+        // Add animation to progress bar when in view
+        const progressBar = document.querySelector('.progress-fill');
+        if (progressBar) {
+            const progressObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        progressBar.style.animation = 'progressAnimation 2s ease';
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            progressObserver.observe(progressBar);
+        }
+    </script>
 </body>
 </html>
